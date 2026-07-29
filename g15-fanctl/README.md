@@ -593,36 +593,6 @@ watch -n 1 'g15-fanctl status'
 
 ---
 
-## 📋 Project Structure
-
-```
-g15-fanctl/
-├── src/
-│   ├── main.cpp              # Entry point
-│   ├── ec.cpp                # EC firmware interface
-│   ├── fan_control.cpp       # Fan PWM logic
-│   ├── temperature.cpp       # Sensor polling
-│   ├── gui.cpp               # GTK3 interface
-│   └── daemon.cpp            # Background service
-├── include/
-│   ├── ec.h
-│   ├── fan_control.h
-│   ├── temperature.h
-│   └── gui.h
-├── debian/
-│   ├── control               # Package metadata
-│   ├── rules                 # Build rules
-│   ├── changelog             # Version history
-│   └── postinst              # Post-install script
-├── CMakeLists.txt            # Build configuration
-├── build.sh                  # Build wrapper script
-├── README.md                 # This file
-├── CHANGELOG.md              # Release notes
-└── LICENSE                   # GPL-3.0 license
-```
-
----
-
 ## 🔧 Development
 
 ### Build Prerequisites
