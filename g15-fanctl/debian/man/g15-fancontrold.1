@@ -1,0 +1,25 @@
+.TH G15-FANCONTROLD 1 "2026-07-26" "g15-fanctl 0.1.0" "Dell G15 Fan Control Center"
+.SH NAME
+g15-fancontrold \- fan/thermal management daemon for the Dell G15 5530
+.SH SYNOPSIS
+.B g15-fancontrold
+.SH DESCRIPTION
+System service that monitors CPU/GPU temperature, fan RPM, and utilization,
+and applies thermal profiles or manual fan curves where the firmware
+supports it. Exposes a D-Bus API on the system bus at
+.B org.g15fanctl.Daemon
+for the GUI and CLI to use. Normally started and supervised by systemd via
+the
+.B g15-fancontrold.service
+unit rather than run directly.
+.SH ENVIRONMENT
+.TP
+.B RUST_LOG
+Controls log verbosity (e.g. \fBdebug\fR, \fBinfo\fR, \fBwarn\fR). Defaults to \fBinfo\fR.
+.SH FILES
+.TP
+.I /var/lib/g15-fanctl/state.json
+Persisted active profile and saved fan curves, restored on daemon startup.
+.SH SEE ALSO
+.BR g15fanctl (1),
+.BR systemctl (1)

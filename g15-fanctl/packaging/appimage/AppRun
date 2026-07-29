@@ -1,0 +1,22 @@
+#!/bin/bash
+# AppRun for the g15-fanctl GUI AppImage.
+#
+# Only the GTK4 GUI (g15-fanctl-gui) is distributed as an AppImage. The
+# privileged daemon (g15-fancontrold) is NOT bundled here on purpose: it must
+# run as a systemd system service to hold the D-Bus system-bus name
+# `org.g15fanctl.Daemon` and to be started at boot, restore state after
+# reboot, etc. An AppImage is a good fit for the unprivileged, per-user GUI;
+# it's a poor fit for a root-running boot-time service. Install the daemon via
+# the .deb package (or `scripts/install.sh`) and use this AppImage purely as
+# a portable way to run the GUI.
+
+HERE="$(dirname "$(readlink -f "${0}")")"
+export LD_LIBRARY_PATH="${HERE}/usr/lib:${LD_LIBRARY_PATH}"
+export GSETTINGS_SCHEMA_DIR="${HERE}/usr/share/glib-2.0/schemas:${GSETTINGS_SCHEMA_DIR}"
+export GTK_DATA_PREFIX="${HERE}/usr"
+
+if ! command -v busctl >/dev/null 2>&1 && ! [ -S /run/dbus/system_bus_socket ]; then
+    echo "warning: system D-Bus socket not found; the GUI will show 'daemon unreachable'" >&2
+fi
+
+exec "${HERE}/usr/bin/g15-fanctl-gui" "$@"

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>G15 Fan Control Center</vendor>
+  <vendor_url>https://github.com/example/g15-fanctl</vendor_url>
+
+  <!-- These actions are defined for a future revision where dbus_service.rs
+       checks polkit authorization per-call (via the "polkit" crate or a
+       direct org.freedesktop.PolicyKit1.Authority D-Bus call) before
+       mutating hardware state, rather than relying solely on the blanket
+       D-Bus policy in packaging/dbus/org.g15fanctl.Daemon.conf. -->
+
+  <action id="org.g15fanctl.set-fan-mode">
+    <description>Change fan speed control mode</description>
+    <message>Authentication is required to change fan control mode</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+
+  <action id="org.g15fanctl.set-profile">
+    <description>Change the active thermal profile</description>
+    <message>Authentication is required to change the thermal profile</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+
+  <action id="org.g15fanctl.save-fan-curve">
+    <description>Save a custom fan curve</description>
+    <message>Authentication is required to save a custom fan curve</message>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+  </action>
+</policyconfig>

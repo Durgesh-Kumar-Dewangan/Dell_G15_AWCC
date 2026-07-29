@@ -1,0 +1,50 @@
+Source: g15-fanctl
+Section: admin
+Priority: optional
+Maintainer: G15 Fan Control Center Contributors <noreply@example.invalid>
+Build-Depends: debhelper-compat (= 13),
+               cargo,
+               rustc (>= 1.75),
+               libgtk-4-dev,
+               libadwaita-1-dev,
+               pkg-config
+Standards-Version: 4.6.2
+Homepage: https://github.com/example/g15-fanctl
+Rules-Requires-Root: no
+
+Package: g15-fanctl
+Architecture: amd64
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         dbus,
+         lm-sensors
+Replaces: g15-fanctl-daemon, g15-fanctl-cli, g15-fanctl-gui
+Breaks: g15-fanctl-daemon, g15-fanctl-cli, g15-fanctl-gui
+Provides: g15-fanctl-daemon, g15-fanctl-cli, g15-fanctl-gui
+Description: Fan/thermal monitoring and control for Dell G-series gaming laptops
+ Unified package (daemon + CLI + GTK4 GUI) for monitoring and controlling
+ fan/thermal behavior on Dell G-series gaming laptops (G15/G16 family),
+ covering Intel 11th-13th gen H/HX CPUs (including the Core i5-13500HX
+ class) and NVIDIA RTX 20/30/40-series mobile GPUs.
+ .
+ Includes:
+  * g15-fancontrold - systemd service reading CPU/GPU temperature, fan RPM,
+    and utilization from documented Linux hwmon/ACPI interfaces, and (where
+    firmware supports it) applying thermal profiles and manual fan curves
+    via the kernel's platform_profile and dell_smm_hwmon interfaces. Exposes
+    a D-Bus API at org.g15fanctl.Daemon.
+  * g15fanctl - scriptable CLI client, plus standalone hardware detection
+    that works without the daemon running.
+  * g15-fanctl-gui - GTK4/Libadwaita dashboard, fan control, thermal
+    profile, and custom fan curve GUI, with live graphs, notifications,
+    and system tray integration.
+ .
+ On hardware where dell_smm_hwmon or platform_profile aren't available, the
+ app automatically falls back to monitoring-only mode rather than guessing;
+ see /usr/share/doc/g15-fanctl/ for the full hardware compatibility notes.
+ .
+ This package does not install or manage the NVIDIA driver itself. GPU
+ telemetry uses whatever NVIDIA driver is already on the system (via
+ nvidia-smi) and is simply omitted if none is installed. Manage your NVIDIA
+ driver the normal way (Software & Updates' Additional Drivers tab, or
+ `ubuntu-drivers autoinstall`) rather than through this package.

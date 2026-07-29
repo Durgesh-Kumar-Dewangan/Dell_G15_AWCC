@@ -1,0 +1,31 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/g15-common",
+    "crates/g15-daemon",
+    "crates/g15-cli",
+    "crates/g15-gui",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["G15 Fan Control Center Contributors"]
+license = "GPL-3.0-or-later"
+repository = "https://example.invalid/g15-fanctl"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+anyhow = "1"
+thiserror = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "fs", "signal", "sync"] }
+tracing = "0.1"
+tracing-subscriber = { version = "=0.3.18", features = ["env-filter"] }
+zbus = "=3.15.2"
+# Pinned transitively-required versions so the project keeps building with the
+# rustc/cargo version shipped in Ubuntu 24.04's archive (1.75), since newer
+# hashbrown/indexmap/toml releases require the (still-unstable-on-1.75) edition2024
+# Cargo feature. Remove these pins once the target distro ships a newer toolchain.
+hashbrown = "=0.14.5"
+indexmap = "=2.2.6"

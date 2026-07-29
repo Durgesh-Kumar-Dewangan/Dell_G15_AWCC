@@ -1,0 +1,25 @@
+[package]
+name = "g15-fanctl-gui"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "g15-fanctl-gui"
+path = "src/main.rs"
+
+[dependencies]
+g15-common = { path = "../g15-common" }
+# Pinned to the 0.8/0.6 series (system-deps ^6, toml ^0.8) rather than the newest
+# gtk4-rs/libadwaita-rs, which pull system-deps 7.0.6+ -> toml 0.9 -> toml_parser,
+# requiring the edition2024 Cargo feature not stabilized in Ubuntu 24.04's rustc 1.75.
+gtk = { package = "gtk4", version = "=0.8.2", features = ["v4_10"] }
+adw = { package = "libadwaita", version = "=0.6.0", features = ["v1_4"] }
+zbus = { workspace = true, features = ["blocking"] }
+serde_json.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+
+hashbrown = "=0.14.5"
+indexmap = "=2.2.6"

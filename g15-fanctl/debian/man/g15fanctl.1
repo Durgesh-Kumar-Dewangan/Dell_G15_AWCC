@@ -1,0 +1,36 @@
+.TH G15FANCTL 1 "2026-07-26" "g15-fanctl 0.1.0" "Dell G15 Fan Control Center"
+.SH NAME
+g15fanctl \- command-line client for the Dell G15 Fan Control Center
+.SH SYNOPSIS
+.B g15fanctl
+.I COMMAND
+.RI [ ARGS ...]
+.SH DESCRIPTION
+Scriptable diagnostics and control for the
+.B g15-fancontrold
+daemon, communicating over D-Bus. The
+.B detect
+subcommand runs standalone hardware detection and does not require the
+daemon to be running.
+.SH COMMANDS
+.TP
+.B detect
+Print a hardware capability report (coretemp, dell_smm_hwmon, platform_profile, NVML).
+.TP
+.B status
+Print the current sensor snapshot as JSON.
+.TP
+.B capabilities
+Print the daemon's reported hardware capabilities as JSON.
+.TP
+.BI "set-profile " PROFILE
+Set the active thermal profile: \fBquiet\fR, \fBbalanced\fR, \fBperformance\fR, \fBgmode\fR, or \fBcustom\fR.
+.TP
+.BI "set-fan " CHANNEL " " MODE
+Set a fan's mode. \fICHANNEL\fR is \fBcpu\fR or \fBgpu\fR; \fIMODE\fR is \fBauto\fR, \fBmax\fR, or a duty cycle 0\(en255.
+.TP
+.B list-curves
+List saved custom fan curves.
+.SH SEE ALSO
+.BR g15-fancontrold (1),
+.BR g15-fanctl-gui (1)

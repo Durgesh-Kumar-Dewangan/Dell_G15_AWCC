@@ -1,0 +1,20 @@
+[package]
+name = "g15-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "g15fanctl"
+path = "src/main.rs"
+
+[dependencies]
+g15-common = { path = "../g15-common" }
+zbus = { workspace = true, features = ["blocking"] }
+serde_json.workspace = true
+anyhow.workspace = true
+clap = { version = "=4.4.18", features = ["derive"] }
+
+hashbrown = "=0.14.5"
+indexmap = "=2.2.6"

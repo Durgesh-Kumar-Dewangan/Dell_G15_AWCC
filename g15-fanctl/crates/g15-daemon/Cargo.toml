@@ -1,0 +1,23 @@
+[package]
+name = "g15-fancontrold"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "g15-fancontrold"
+path = "src/main.rs"
+
+[dependencies]
+g15-common = { path = "../g15-common" }
+tokio.workspace = true
+zbus.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+
+hashbrown = "=0.14.5"
+indexmap = "=2.2.6"

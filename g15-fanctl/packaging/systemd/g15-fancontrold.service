@@ -1,0 +1,53 @@
+[Unit]
+Description=Dell G15 5530 Fan Control Center daemon
+Documentation=https://github.com/example/g15-fanctl
+After=multi-user.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/g15-fancontrold
+Restart=on-failure
+RestartSec=2
+
+# --- Privilege minimization ---------------------------------------------
+# The daemon needs to write to specific hwmon sysfs files and the
+# platform_profile ACPI file. It does NOT need general root privileges,
+# raw I/O port access, module loading capability, or a writable filesystem
+# beyond its own state directory.
+User=root
+# NOTE: hwmon/platform_profile sysfs nodes are typically root:root 0644/0200,
+# so writing to pwm*/pwm*_enable and platform_profile requires root today.
+# If your kernel exposes these with group-writable permissions (e.g. via a
+# udev rule granting group "g15fanctl" write access), switch to:
+#   User=g15fanctl
+#   SupplementaryGroups=g15fanctl
+# and drop the capability/filesystem grants below accordingly.
+
+CapabilityBoundingSet=
+AmbientCapabilities=
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=no
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+RestrictRealtime=yes
+SystemCallFilter=@system-service
+SystemCallArchitectures=native
+
+# State directory (auto-created with correct perms, mode 0750 root:root by default)
+StateDirectory=g15-fanctl
+ReadWritePaths=/var/lib/g15-fanctl
+
+# The specific sysfs subtrees the daemon needs write access to. ProtectSystem=strict
+# makes / read-only except for explicitly listed paths; /sys is not covered by
+# ProtectSystem so hwmon/platform_profile writes still work through the normal
+# DAC permission model (root can write to these regardless).
+
+[Install]
+WantedBy=multi-user.target

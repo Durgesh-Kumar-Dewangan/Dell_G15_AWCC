@@ -1,0 +1,45 @@
+g15-fanctl (0.2.1) unstable; urgency=high
+
+  * Remove the `Recommends: nvidia-driver-535 | nvidia-driver-550 |
+    nvidia-driver-570` line. On systems with an existing, non-trivial NVIDIA
+    driver setup (e.g. mixed oem/oracle kernel-flavored driver packages),
+    this could cause apt to attempt installing/reconfiguring an NVIDIA
+    driver as a side effect of installing g15-fanctl, cascading into
+    unrelated dpkg failures in that pre-existing driver stack. This package
+    never required a specific NVIDIA driver version to function — GPU
+    telemetry already degrades gracefully (reported as unavailable) when no
+    driver is present — so it has no business asking apt to install one.
+    Manage your NVIDIA driver separately via Ubuntu's Additional Drivers
+    tool or `ubuntu-drivers autoinstall`.
+
+ -- G15 Fan Control Center Contributors <noreply@example.invalid>  Wed, 29 Jul 2026 12:00:00 +0000
+
+g15-fanctl (0.2.0) unstable; urgency=medium
+
+  * Unify the previous three packages (g15-fanctl-daemon, g15-fanctl-cli,
+    g15-fanctl-gui) into a single g15-fanctl package. Adds Replaces/Breaks/
+    Provides against the old package names so upgrading from them (via
+    `apt install ./g15-fanctl_0.2.0_amd64.deb`) no longer fails with
+    "trying to overwrite" errors on shared files like /usr/bin/g15fanctl.
+  * Rename the shipped modprobe.d/modules-load.d config files to
+    g15-fanctl-dell-smm-hwmon.conf so they no longer collide with Ubuntu's
+    unrelated i8kutils package, which ships a conffile at the same path
+    this package previously used. No hard Conflicts is declared against
+    i8kutils; postinst just prints a one-time warning if it's also present,
+    since both can be installed side by side.
+  * Broaden hardware-support documentation and detection (DMI product name,
+    CPU model string, NVIDIA GPU name reporting) to cover the wider Dell
+    G-series family (G15/G16, 11th-13th gen Intel H/HX, RTX 20/30/40-series)
+    rather than a single fixed SKU.
+  * Add a frost-glass GTK4 CSS theme to the GUI.
+
+ -- G15 Fan Control Center Contributors <noreply@example.invalid>  Wed, 29 Jul 2026 00:00:00 +0000
+
+g15-fanctl (0.1.0) unstable; urgency=medium
+
+  * Initial release: hardware detection, sensor monitoring, thermal profile
+    switching via platform_profile, manual fan control via dell_smm_hwmon
+    where supported, custom fan curves, GTK4/Libadwaita GUI, D-Bus daemon,
+    systemd service, CLI.
+
+ -- G15 Fan Control Center Contributors <noreply@example.invalid>  Sat, 25 Jul 2026 00:00:00 +0000

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Dell G15 Fan Control Center
+Comment=Monitor and control thermal/fan behavior on Dell G-series gaming laptops
+Exec=g15-fanctl-gui
+Icon=g15-fanctl
+Terminal=false
+Categories=System;Settings;HardwareSettings;
+StartupNotify=true

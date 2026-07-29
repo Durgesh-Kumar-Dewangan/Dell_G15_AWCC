@@ -1,0 +1,38 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	cargo build --release --locked \
+		-p g15-fancontrold -p g15-cli -p g15-fanctl-gui
+
+override_dh_auto_install:
+	install -D -m0755 target/release/g15-fancontrold \
+		debian/g15-fanctl/usr/bin/g15-fancontrold
+	install -D -m0755 target/release/g15fanctl \
+		debian/g15-fanctl/usr/bin/g15fanctl
+	install -D -m0755 target/release/g15-fanctl-gui \
+		debian/g15-fanctl/usr/bin/g15-fanctl-gui
+
+	install -D -m0644 packaging/systemd/g15-fancontrold.service \
+		debian/g15-fanctl/lib/systemd/system/g15-fancontrold.service
+	install -D -m0644 packaging/dbus/org.g15fanctl.Daemon.conf \
+		debian/g15-fanctl/usr/share/dbus-1/system.d/org.g15fanctl.Daemon.conf
+	install -D -m0644 packaging/polkit/org.g15fanctl.policy \
+		debian/g15-fanctl/usr/share/polkit-1/actions/org.g15fanctl.policy
+	install -D -m0644 packaging/modprobe/g15-fanctl-dell-smm-hwmon.conf \
+		debian/g15-fanctl/etc/modprobe.d/g15-fanctl-dell-smm-hwmon.conf
+	install -D -m0644 packaging/modprobe/g15-fanctl-dell-smm-hwmon-load.conf \
+		debian/g15-fanctl/etc/modules-load.d/g15-fanctl-dell-smm-hwmon.conf
+
+	install -D -m0644 packaging/desktop/g15-fanctl.desktop \
+		debian/g15-fanctl/usr/share/applications/g15-fanctl.desktop
+
+override_dh_auto_test:
+	cargo test --release -p g15-common
+
+# Fan/EC hardware writes cannot be exercised in a package build chroot; the
+# unit tests here are pure-logic (fan curve math, settings persistence) and
+# don't touch the filesystem outside a tempdir. See docs/05-testing.md for the
+# manual hardware verification procedure required before each release.
