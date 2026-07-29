@@ -62,7 +62,7 @@
 ```bash
 # Download latest release
 cd ~/Downloads
-wget https://github.com/yourusername/g15-fanctl/releases/download/v0.2.1/g15-fanctl_0.2.1_amd64.deb
+wget https://github.com/Durgesh-Kumar-Dewangan/Dell_G15_AWCC/blob/f02caa748ae829a30f3d82b21c6442a01104645d/g15-fanctl/g15-fanctl_0.2.1_amd64.deb
 
 # Install the package
 sudo apt install ./g15-fanctl_0.2.1_amd64.deb
@@ -75,7 +75,7 @@ g15-fanctl-gui
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/g15-fanctl.git
+git clone https://github.com/Durgesh-Kumar-Dewangan/Dell_G15_AWCC.git
 cd g15-fanctl
 
 # Build and install
@@ -106,7 +106,7 @@ g15-fanctl --version
 **Step 1: Download the Package**
 ```bash
 cd ~/Downloads
-wget https://github.com/yourusername/g15-fanctl/releases/download/v0.2.1/g15-fanctl_0.2.1_amd64.deb
+wget https://github.com/Durgesh-Kumar-Dewangan/Dell_G15_AWCC/blob/f02caa748ae829a30f3d82b21c6442a01104645d/g15-fanctl/g15-fanctl_0.2.1_amd64.deb
 ```
 
 **Step 2: Install Using apt**
@@ -171,7 +171,7 @@ sudo apt install -y \
 ### Clone Repository
 
 ```bash
-git clone https://github.com/yourusername/g15-fanctl.git
+git clone https://github.com/Durgesh-Kumar-Dewangan/Dell_G15_AWCC.git
 cd g15-fanctl
 ```
 
