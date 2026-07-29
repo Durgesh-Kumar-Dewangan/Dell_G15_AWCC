@@ -8,7 +8,7 @@ import { FanSpeedGauge } from '@/components/fan-speed-gauge';
 import { FanControlPanel } from '@/components/fan-control-panel';
 import { ProfileSelector } from '@/components/profile-selector';
 import { SystemStatus } from '@/components/system-status';
-import { Thermometer, Wind, Activity, AlertCircle } from 'lucide-react';
+import { Thermometer, Wind, Activity, AlertCircle, Wifi, WifiOff } from 'lucide-react';
 
 interface DashboardData {
   cpuTemp: number;
@@ -20,6 +20,13 @@ interface DashboardData {
   currentProfile: string;
   cpuFanMode: 'auto' | 'manual' | 'maximum';
   gpuFanMode: 'auto' | 'manual' | 'maximum';
+  systemHealth: 'normal' | 'warning' | 'critical';
+}
+
+interface HardwareStatus {
+  available: boolean;
+  operatingMode: 'hardware-control' | 'demo-mode';
+  message: string;
 }
 
 const MOCK_CHART_DATA = Array.from({ length: 30 }, (_, i) => ({
@@ -30,6 +37,11 @@ const MOCK_CHART_DATA = Array.from({ length: 30 }, (_, i) => ({
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [hardwareStatus, setHardwareStatus] = useState<HardwareStatus>({
+    available: false,
+    operatingMode: 'demo-mode',
+    message: 'Loading hardware status...',
+  });
   const [data, setData] = useState<DashboardData>({
     cpuTemp: 52,
     gpuTemp: 58,
@@ -40,26 +52,86 @@ export default function Home() {
     currentProfile: 'balanced',
     cpuFanMode: 'auto',
     gpuFanMode: 'auto',
+    systemHealth: 'normal',
   });
 
+  // Initialize hardware and fetch real data
   useEffect(() => {
     setMounted(true);
 
-    // Simulate real-time updates
-    const interval = setInterval(() => {
-      setData((prev) => ({
-        ...prev,
-        cpuTemp: Math.max(40, Math.min(95, prev.cpuTemp + (Math.random() - 0.5) * 2)),
-        gpuTemp: Math.max(40, Math.min(90, prev.gpuTemp + (Math.random() - 0.5) * 2)),
-        cpuRpm: Math.max(1000, Math.min(5000, prev.cpuRpm + (Math.random() - 0.5) * 100)),
-        gpuRpm: Math.max(1000, Math.min(5000, prev.gpuRpm + (Math.random() - 0.5) * 100)),
-        cpuUtil: Math.max(0, Math.min(100, prev.cpuUtil + (Math.random() - 0.5) * 5)),
-        gpuUtil: Math.max(0, Math.min(100, prev.gpuUtil + (Math.random() - 0.5) * 5)),
-      }));
+    const initializeHardware = async () => {
+      try {
+        // Check hardware status
+        const statusRes = await fetch('/api/hardware/status');
+        const statusData = await statusRes.json();
+        setHardwareStatus({
+          available: statusData.hardwareAvailable,
+          operatingMode: statusData.operatingMode,
+          message: statusData.message,
+        });
+
+        // Fetch real thermal data if available
+        if (statusData.hardwareAvailable) {
+          const thermalRes = await fetch('/api/hardware/thermal');
+          const thermalData = await thermalRes.json();
+          if (thermalData.success && thermalData.data) {
+            setData((prev) => ({
+              ...prev,
+              cpuTemp: thermalData.data.cpuTemp,
+              gpuTemp: thermalData.data.gpuTemp,
+              cpuRpm: thermalData.data.cpuRpm || prev.cpuRpm,
+              gpuRpm: thermalData.data.gpuRpm || prev.gpuRpm,
+              systemHealth: thermalData.data.systemHealth,
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('[v0] Hardware initialization failed:', error);
+        setHardwareStatus({
+          available: false,
+          operatingMode: 'demo-mode',
+          message: 'Running in demo mode - real hardware not accessible',
+        });
+      }
+    };
+
+    initializeHardware();
+
+    // Real-time updates - fetch from hardware or use simulated data
+    const interval = setInterval(async () => {
+      if (hardwareStatus.available) {
+        try {
+          const res = await fetch('/api/hardware/thermal');
+          const thermalData = await res.json();
+          if (thermalData.success && thermalData.data) {
+            setData((prev) => ({
+              ...prev,
+              cpuTemp: thermalData.data.cpuTemp,
+              gpuTemp: thermalData.data.gpuTemp,
+              cpuRpm: thermalData.data.cpuRpm || prev.cpuRpm,
+              gpuRpm: thermalData.data.gpuRpm || prev.gpuRpm,
+              systemHealth: thermalData.data.systemHealth,
+            }));
+          }
+        } catch (error) {
+          console.error('[v0] Real-time update failed:', error);
+        }
+      } else {
+        // Use simulated data when hardware is not available
+        setData((prev) => ({
+          ...prev,
+          cpuTemp: Math.max(40, Math.min(95, prev.cpuTemp + (Math.random() - 0.5) * 2)),
+          gpuTemp: Math.max(40, Math.min(90, prev.gpuTemp + (Math.random() - 0.5) * 2)),
+          cpuRpm: Math.max(1000, Math.min(5000, prev.cpuRpm + (Math.random() - 0.5) * 100)),
+          gpuRpm: Math.max(1000, Math.min(5000, prev.gpuRpm + (Math.random() - 0.5) * 100)),
+          cpuUtil: Math.max(0, Math.min(100, prev.cpuUtil + (Math.random() - 0.5) * 5)),
+          gpuUtil: Math.max(0, Math.min(100, prev.gpuUtil + (Math.random() - 0.5) * 5)),
+        }));
+      }
     }, 2000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [hardwareStatus.available]);
 
   if (!mounted) return null;
 
@@ -72,6 +144,27 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Hardware Status Banner */}
+        <div className={`mb-8 p-4 rounded-lg border flex items-center gap-3 ${
+          hardwareStatus.available
+            ? 'bg-success/10 border-success/30'
+            : 'bg-warning/10 border-warning/30'
+        }`}>
+          {hardwareStatus.available ? (
+            <Wifi className="w-5 h-5 text-success flex-shrink-0" />
+          ) : (
+            <WifiOff className="w-5 h-5 text-warning flex-shrink-0" />
+          )}
+          <div>
+            <p className={`font-semibold mb-1 ${
+              hardwareStatus.available ? 'text-success' : 'text-warning'
+            }`}>
+              {hardwareStatus.operatingMode === 'hardware-control' ? 'Hardware Control Active' : 'Demo Mode'}
+            </p>
+            <p className="text-sm text-text-secondary">{hardwareStatus.message}</p>
+          </div>
+        </div>
+
         {/* Hero Section */}
         <div className="mb-12 animate-fade-in">
           <h1 className="text-4xl md:text-5xl font-bold text-text mb-3">
